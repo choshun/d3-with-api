@@ -1,6 +1,6 @@
-var path = require('path');
-var webpack = require('webpack');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: path.resolve(__dirname, '../src/client/app.js'),
@@ -10,7 +10,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Webpack Angular 1.5 Seed - inspired from kitconcept https://github.com/kitconcept/webpack-starter-angular/',
+      title: 'Angular 1.5 and D3',
       template: path.resolve(__dirname, '../src/client/index.html'),
       minify: {
         collapseWhitespace: true,
