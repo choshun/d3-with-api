@@ -14,6 +14,11 @@ class ControlsService {
       {hour: 9, sales: 55},
       {hour: 10, sales: 20}
     ]};
+
+    this.metric = 1;
+    this.api = 'https://api.nextbigsound.com/metrics/v1/entityData';
+    this.accessToken = '2e7b54f5516e40969a07ec5a9f82f5c1';
+    // this.serviceCall = 'https://api.nextbigsound.com/metrics/v1/entityData?start=2016-01-01&end=2016-02-01&metrics=' + this.metric + '&entities=11&access_token=' + this.accessToken;
   }
 
   getName() {
@@ -23,6 +28,25 @@ class ControlsService {
   getItems(githubUsername, type) {
     
     return this.data;
+  }
+
+  getMetrics(metric) {
+    console.log(metric);
+    return this.$http({
+      url: this.api,
+      params: {
+        metrics: metric,
+        access_token: this.accessToken,
+        start: '2013-01-01',
+        end: '2014-01-01',
+        entities: 11
+      }
+    }).success(function(data) {
+      // TODO: pluck description of metric
+      return data;
+    }).error(function(data, status) {
+      console.error(status);
+    });
   }
 
   // getItems(githubUsername, type) {
