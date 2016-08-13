@@ -31,6 +31,16 @@ class ControlsController {
     this.setView(this.controlsService.getItems());
   }
 
+  getMetric() {
+    // TODO loop through like, tweet metrics and aggregate
+    this.controlsService.getMetrics(11).then((res) => {
+      this.result = res.data;
+      console.log('result', this.result);
+
+      this.setView(this.result);
+    });;
+  }
+
   setView(data) {
     // console.log('data!!', data);
     this.data = data;
