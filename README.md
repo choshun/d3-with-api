@@ -29,6 +29,8 @@ how do you make lines from circles to average?
 
 STEPS
 Look up artist get ID
+- get back id with promise
+- fire metrics with id
 Look up metrics like and tweet with artist ID
 Make bar graph
 
@@ -42,3 +44,10 @@ Find Events vs average curve
 Make lines to curve
 
 Show in text what location was best and worst
+
+DONE:
+
+Look up artist get ID
+- wire input to artist
+- replace spaces with +'s
+- have it fire onload with model supplied
