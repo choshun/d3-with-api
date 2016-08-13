@@ -1,34 +1,39 @@
 class ControlsController {
   constructor(controlsService) {
     this.controlsService = controlsService;
-    this.name = 'I get ler Component';
-    this.githubUsername = 'choshun';
+
+    this.data = {};
     this.result = {};
     this.timeout = {};
     this.timeoutTime = 1000;
-    this.type = 'User';
+    this.artist = 'Kid cudi';
+
+    this.init();
   }
 
-  getServiceName() {
-    return this.controlsService.getName();
+  init() {
+    this.getArtist();
   }
-
-  // getDetails() {
-  //   clearTimeout(this.timeout);
-
-  //   this.timeout = setTimeout(() => {
-  //     this.controlsService.getItems(this.githubUsername, this.type).then((res) => {
-  //         this.result = res.data;
-  //         console.log('result?', this.result);
-  //         console.log(this.result);
-
-  //         this.setView(this.result.data.id);
-  //       });
-  //   }, this.timeoutTime);
-  // }
 
   getDetails() {
     this.setView(this.controlsService.getItems());
+  }
+
+  getArtist() {
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(() => {
+      this.controlsService.getArtist(this.artist).then((res) => {
+        console.log('result', this.result);
+
+        if (res.data.artists.length > 0) {
+          this.result = res.data.artists[0].id;
+          this.setView(this.result);
+        } else {
+          this.setView('nothin for ' + this.artist);
+        }
+        
+      });
+    }, this.timeoutTime);
   }
 
   getMetric() {
@@ -42,7 +47,6 @@ class ControlsController {
   }
 
   setView(data) {
-    // console.log('data!!', data);
     this.data = data;
     this.onDataChange({
       $event: { data: this.data }
