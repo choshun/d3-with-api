@@ -71,6 +71,25 @@ input {
 
 }
 
+.app {
+  overflow: hidden;
+}
+
+.controls-component {
+  position: fixed;
+  z-index: 2;
+}
+
+.data {
+  opacity: 0.5;
+}
+
+.graph {
+  left: 0;
+  position: fixed;
+  top: 0;
+}
+
 .accessible {
   left : -9999em;
   position: absolute;

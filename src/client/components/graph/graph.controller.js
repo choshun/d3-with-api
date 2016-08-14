@@ -1,9 +1,15 @@
 class TargetController {
-  constructor(graphService) {
+  constructor($window, graphService) {
     this.graphService = graphService;
 
     this.data = {};
     this.rawSvg = document.getElementById('graph');
+
+    this.init();
+  }
+
+  init() {
+    
   }
 
   $onChanges(changesObj) {
