@@ -11,7 +11,8 @@ class ControlsService {
       start: '2015-08-01',
       end: '2016-08-01'
     }
-    this.metrics = '400,44,28,11';
+    // this.metrics = '44,28,11'; 44 is facebook, 11 fb, 28 twitter
+    this.metrics = '28,11';
 
     this.data = {
       metrics: {},
@@ -45,7 +46,6 @@ class ControlsService {
   }
 
   getMetrics(artistId) {
-    console.log('artistId?',artistId);
     return this.$http({
       url: this.apiMetrics,
       params: Object.assign({}, this.baseParams, {
@@ -60,6 +60,37 @@ class ControlsService {
     });
   }
 
+  prepMetricsData(data) {
+    let baseKey = data.output.artists[this.data.artist.id];
+    if (baseKey) {
+      let metrics = [];
+      metrics.push(this.getTwitterData(baseKey, data), this.getFacebookData(baseKey, data));
+
+      // let preppedData = data.output.artists[5373].metrics['11'].endpoints['658357_starkeymusic'].data.global.values.totals;
+      return metrics;
+    }
+    
+  }
+
+  // TODO consolidate metric getters.
+  getFacebookData(baseKey, data) {
+    let metricData = baseKey.metrics['11'].endpoints;
+    return {
+      'facebookMetric': metricData[this.getFirstKey(metricData)].data.global.values.totals
+    };
+  }
+
+  getTwitterData(baseKey, data) {
+    let metricData = baseKey.metrics['28'];
+
+    if (metricData) {
+      return {
+        'twitterMetric': metricData.endpoints[this.getFirstKey(metricData.endpoints)].data.global.values.totals
+      };
+    }
+  }
+
+  // Helpers.
   getData(key) {
     return (key !== undefined) ? this.data[key] : this.data;
   }
@@ -68,9 +99,8 @@ class ControlsService {
     return artist.replace(/\s+/g, '+').toLowerCase();
   }
 
-  prepMetricsData(data) {
-    let preppedData = data.output.artists[5373].metrics['11'].endpoints['658357_starkeymusic'].data.global.values.totals;
-    return preppedData;
+  getFirstKey(data) {
+    for (var key in data) return key;
   }
 }
 
