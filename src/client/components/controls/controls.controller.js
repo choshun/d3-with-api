@@ -3,10 +3,12 @@ class ControlsController {
     this.controlsService = controlsService;
 
     this.data = {};
-    this.result = {};
     this.timeout = {};
     this.timeoutTime = 1000;
-    this.artist = 'Kid cudi';
+
+    this.artistRequested = 'Starkey';
+    this.artistId = undefined;
+    this.artistName = undefined;
 
     this.init();
   }
@@ -15,34 +17,27 @@ class ControlsController {
     this.getArtist();
   }
 
-  getDetails() {
-    this.setView(this.controlsService.getItems());
-  }
-
   getArtist() {
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
-      this.controlsService.getArtist(this.artist).then((res) => {
-        console.log('result', this.result);
+      this.controlsService.getArtist(this.artistRequested).then((res) => {
+        let serviceData = this.controlsService.getData('artist');
+        this.artistId = serviceData.id;
+        this.artistName = serviceData.name;
 
-        if (res.data.artists.length > 0) {
-          this.result = res.data.artists[0].id;
-          this.setView(this.result);
-        } else {
-          this.setView('nothin for ' + this.artist);
-        }
-        
+        this.getMetrics(this.artistId);
+        this.setView(this.artistId);
       });
     }, this.timeoutTime);
   }
 
-  getMetric() {
+  getMetrics(artistId) {
+    console.log('artist from controller?', artistId);
     // TODO loop through like, tweet metrics and aggregate
-    this.controlsService.getMetrics(11).then((res) => {
-      this.result = res.data;
-      console.log('result', this.result);
+    this.controlsService.getMetrics(artistId).then((res) => {
+      console.log('METRICS PEW PEW', this.controlsService.getData('metrics'));
 
-      this.setView(this.result);
+      this.setView(this.controlsService.getData('metrics'));
     });;
   }
 
