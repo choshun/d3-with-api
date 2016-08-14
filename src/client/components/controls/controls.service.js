@@ -1,3 +1,5 @@
+import { forOwn } from 'lodash';
+
 class ControlsService {
   constructor($http) {
     this.$http = $http;
@@ -14,14 +16,21 @@ class ControlsService {
     };
     // this.metrics = '44,28,11'; 44 is facebook, 11 fb, 28 twitter
     this.metrics = '28,11';
+    this.highestDelta = 0;
+    this.time = 7;
 
     this.data = {
-      metrics: {},
+      metrics: {
+        highestDelta: {},
+        delta: {},
+        social: {}
+      },
       artist: {
         id: 0,
         name: 'Nothing coming back :('
       },
-      events: {}
+      events: {},
+      delta: {}
     };
 
     this.dataCoefficent = 86400000;
@@ -58,21 +67,23 @@ class ControlsService {
       })
     }).success((data) => {
       // console.log('get something useful', data);
-      this.data.metrics = this.prepMetricsData(data);
+      this.data.metrics.social = this.prepMetricsData(data);
     }).error((data, status) => {
       console.error(status);
     });
   }
 
   getEvents(artistId) {
+    let end = parseInt(this.getFirstKey(this.data.metrics.highestDelta)),
+        start = end - this.time;
+
     return this.$http({
       url: this.apiEvents + artistId,
       params: Object.assign({}, this.baseParams, {
-        start: new Date(this.baseParams.start).getTime() / this.dataCoefficent,
-        end: new Date(this.baseParams.end).getTime() / this.dataCoefficent
+        start: start,
+        end: end
       })
     }).success((data) => {
-      console.log('events!', data);
       this.data.events = data;
     }).error((data, status) => {
       console.error(status);
@@ -88,13 +99,14 @@ class ControlsService {
 
     if (baseKey) {
       let metrics = [];
+      // Get fb and twitter totals
       metrics.push(this.getTwitterData(baseKey, data), this.getFacebookData(baseKey, data));
+      // Get fb and twitter deltas
+      // TODO aggregate? only getting fb
+      this.findDelta(this.getFacebookData(baseKey, data).facebookMetric);
 
-      // TODO: push percent delta
-      // normalize values based on higher one, then push difference of day total vs next day total. Have one delta graph assuming twitter and fb followers are equally important.
       return metrics;
     }
-    
   }
 
   // TODO consolidate metric getters.
@@ -113,6 +125,56 @@ class ControlsService {
         'twitterMetric': metricData.endpoints[this.getFirstKey(metricData.endpoints)].data.global.values.totals
       };
     }
+  }
+
+  findDelta(data) {
+    let deltaMetric = {},
+        deltaMetricFlat = [],
+        deltaMetricOverTime = {},
+        index = 0,
+        oldObjKey;
+
+    _.forOwn(data, (value, key) => {
+      if (index === 0) {
+        oldObjKey = key;
+        
+      } else {
+        deltaMetric[key] = (value - data[oldObjKey]);
+        deltaMetricFlat.push(value);
+
+        if (index > this.time) {
+          deltaMetricOverTime[key] = this.getDeltaOverTime(deltaMetricFlat, index, this.time, key);
+        }
+
+        // console.log(value, value - data[oldObjKey], (value - data[oldObjKey]) / value + '%');
+        oldObjKey = key;
+      }
+
+      index++;
+    });
+
+    this.data.metrics.delta = deltaMetricOverTime;
+  }
+
+  getDeltaOverTime(data, start, time, key) {
+    let delta = 0;
+
+    let deltaStart = data[start - time],
+        deltaEnd = data[start - 1];
+
+    // delta = (deltaEnd - deltaStart) / deltaEnd;
+    delta = (deltaEnd - deltaStart);
+
+    // console.log(delta, this.highestDelta);
+
+    if (delta > this.highestDelta) {
+      this.highestDelta = delta;
+      this.data.metrics.highestDelta = {
+        [key - time]: this.highestDelta
+      };
+    }
+
+    return delta;
   }
 
   // Helpers.
