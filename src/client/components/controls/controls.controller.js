@@ -34,9 +34,8 @@ class ControlsController {
   getMetrics(artistId) {
     // TODO loop through like, tweet metrics and aggregate
     this.controlsService.getMetrics(artistId).then((res) => {
-      console.log('METRICS PEW PEW', this.controlsService.getData('metrics'));
       this.getEvents(artistId);
-      this.setView(this.controlsService.getData('metrics'));
+      this.setView(this.controlsService.getData());
     });
   }
 
