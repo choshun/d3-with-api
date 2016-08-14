@@ -14,9 +14,27 @@ class ControlsService {
       start: '2015-08-01',
       end: '2016-08-01'
     };
-    // this.metrics = '44,28,11'; 44 is facebook, 11 fb, 28 twitter
+
+    /**
+     * Metric type request params. 44 is youtube, 11 fb, 28 twitter
+     * @type {String}
+     */
     this.metrics = '28,11';
+
+    /**
+     * The value of the highest week of increased social followers.
+     * Sort of a placeholder, 
+     *     {['day']: ['number for the week']}
+     *
+     * is in this.data.metrics.
+     * @type {Number}
+     */
     this.highestDelta = 0;
+
+    /**
+     * A day threshold.
+     * @type {Number}
+     */
     this.time = 7;
 
     this.data = {
@@ -29,11 +47,8 @@ class ControlsService {
         id: 0,
         name: 'Nothing coming back :('
       },
-      events: {},
-      delta: {}
+      events: {}
     };
-
-    this.dataCoefficent = 86400000;
   }
 
   getArtist(artist) {
@@ -59,6 +74,7 @@ class ControlsService {
   }
 
   getMetrics(artistId) {
+
     return this.$http({
       url: this.apiMetrics,
       params: Object.assign({}, this.baseParams, {
@@ -66,8 +82,8 @@ class ControlsService {
         entities: artistId // artist from get artist
       })
     }).success((data) => {
-      // console.log('get something useful', data);
       this.data.metrics.social = this.prepMetricsData(data);
+      this.data.metrics.delta = this.findDelta(this.data.metrics.social);
     }).error((data, status) => {
       console.error(status);
     });
@@ -101,9 +117,6 @@ class ControlsService {
       let metrics = [];
       // Get fb and twitter totals
       metrics.push(this.getTwitterData(baseKey, data), this.getFacebookData(baseKey, data));
-      // Get fb and twitter deltas
-      // TODO aggregate? only getting fb
-      this.findDelta(this.getFacebookData(baseKey, data).facebookMetric);
 
       return metrics;
     }
@@ -111,7 +124,9 @@ class ControlsService {
 
   // TODO consolidate metric getters.
   getFacebookData(baseKey, data) {
+    // Something fishy is going on here, when I move .endpoints to the return key it borks.
     let metricData = baseKey.metrics['11'].endpoints;
+
     return {
       'facebookMetric': metricData[this.getFirstKey(metricData)].data.global.values.totals
     };
@@ -127,17 +142,18 @@ class ControlsService {
     }
   }
 
-  findDelta(data) {
-    let deltaMetric = {},
+  findDelta(socialData) {
+    let data = this.aggregateSocialTotals(socialData),
+        deltaMetric = {},
         deltaMetricFlat = [],
         deltaMetricOverTime = {},
         index = 0,
         oldObjKey;
 
     _.forOwn(data, (value, key) => {
+
       if (index === 0) {
         oldObjKey = key;
-        
       } else {
         deltaMetric[key] = (value - data[oldObjKey]);
         deltaMetricFlat.push(value);
@@ -146,14 +162,25 @@ class ControlsService {
           deltaMetricOverTime[key] = this.getDeltaOverTime(deltaMetricFlat, index, this.time, key);
         }
 
-        // console.log(value, value - data[oldObjKey], (value - data[oldObjKey]) / value + '%');
         oldObjKey = key;
       }
 
       index++;
     });
 
-    this.data.metrics.delta = deltaMetricOverTime;
+    return deltaMetricOverTime;
+  }
+
+  aggregateSocialTotals(socialData) {
+    let aggregateData = {},
+        twitterData = socialData[0][this.getFirstKey(socialData[0])],
+        faceBookData = socialData[1][this.getFirstKey(socialData[1])];
+
+    _.forOwn(twitterData, (value, key) => 
+      aggregateData[key] = (parseInt(twitterData[key]) + parseInt(faceBookData[key]));
+    });
+
+    return aggregateData;
   }
 
   getDeltaOverTime(data, start, time, key) {
@@ -165,8 +192,7 @@ class ControlsService {
     // delta = (deltaEnd - deltaStart) / deltaEnd;
     delta = (deltaEnd - deltaStart);
 
-    // console.log(delta, this.highestDelta);
-
+    // Get highest delta. This will drive what events I request.
     if (delta > this.highestDelta) {
       this.highestDelta = delta;
       this.data.metrics.highestDelta = {
