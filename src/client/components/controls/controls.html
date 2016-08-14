@@ -1,9 +1,11 @@
 <form>
   <legend class="">Where should I play?</legend>
   <fieldset> 
-    <input id="artist" type="text" value="{{ controlsCtrl.artist}}" ng-change="controlsCtrl.getArtist()" ng-model="controlsCtrl.artist" />
+    <input id="artist" type="text" value="{{ controlsCtrl.artistRequested }}" ng-change="controlsCtrl.getArtist()" ng-model="controlsCtrl.artistRequested" />
     <label for="artist" class="accessible">choose an artist</label>
   </fieldset> 
+
+data: {{ controlsCtrl.artistId }} {{ controlsCtrl.artistName }}
 
 </form>
 <p><a ng-click="controlsCtrl.getMetric(11)">api metrics call</a></p>
