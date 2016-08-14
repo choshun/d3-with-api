@@ -5,12 +5,13 @@ class ControlsService {
     this.api = 'https://api.nextbigsound.com/';
     this.apiArtist = this.api + 'search/v1/artists/';
     this.apiMetrics = this.api + 'metrics/v1/entityData/';
+    this.apiEvents = this.api + 'events/v1/artists/';
     this.accessToken = '2e7b54f5516e40969a07ec5a9f82f5c1';
     this.baseParams = {
       access_token: this.accessToken,
       start: '2015-08-01',
       end: '2016-08-01'
-    }
+    };
     // this.metrics = '44,28,11'; 44 is facebook, 11 fb, 28 twitter
     this.metrics = '28,11';
 
@@ -19,8 +20,11 @@ class ControlsService {
       artist: {
         id: 0,
         name: 'Nothing coming back :('
-      }
+      },
+      events: {}
     };
+
+    this.dataCoefficent = 86400000;
   }
 
   getArtist(artist) {
@@ -53,20 +57,41 @@ class ControlsService {
         entities: artistId // artist from get artist
       })
     }).success((data) => {
-      console.log('get something useful', data);
+      // console.log('get something useful', data);
       this.data.metrics = this.prepMetricsData(data);
     }).error((data, status) => {
       console.error(status);
     });
   }
 
+  getEvents(artistId) {
+    return this.$http({
+      url: this.apiEvents + artistId,
+      params: Object.assign({}, this.baseParams, {
+        start: new Date(this.baseParams.start).getTime() / this.dataCoefficent,
+        end: new Date(this.baseParams.end).getTime() / this.dataCoefficent
+      })
+    }).success((data) => {
+      console.log('events!', data);
+      this.data.events = data;
+    }).error((data, status) => {
+      console.error(status);
+    });
+  }
+
   prepMetricsData(data) {
-    let baseKey = data.output.artists[this.data.artist.id];
+    let baseKey;
+
+    if (data.output) {
+      baseKey = data.output.artists[this.data.artist.id];
+    }
+
     if (baseKey) {
       let metrics = [];
       metrics.push(this.getTwitterData(baseKey, data), this.getFacebookData(baseKey, data));
 
-      // let preppedData = data.output.artists[5373].metrics['11'].endpoints['658357_starkeymusic'].data.global.values.totals;
+      // TODO: push percent delta
+      // normalize values based on higher one, then push difference of day total vs next day total. Have one delta graph assuming twitter and fb followers are equally important.
       return metrics;
     }
     
