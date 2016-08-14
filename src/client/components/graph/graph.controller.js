@@ -7,6 +7,7 @@ class TargetController {
   }
 
   $onChanges(changesObj) {
+    console.log('change!!!', this.data);
     // this.graphService.graph(this.rawSvg, this.data);
   }
 }

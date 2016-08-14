@@ -176,7 +176,7 @@ class ControlsService {
         twitterData = socialData[0][this.getFirstKey(socialData[0])],
         faceBookData = socialData[1][this.getFirstKey(socialData[1])];
 
-    _.forOwn(twitterData, (value, key) => 
+    _.forOwn(twitterData, (value, key) => {
       aggregateData[key] = (parseInt(twitterData[key]) + parseInt(faceBookData[key]));
     });
 
