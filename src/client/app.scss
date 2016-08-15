@@ -81,7 +81,6 @@ sup {
   font-size: 0.5em;  
 }
 
-
 .app {
   overflow: hidden;
 }
@@ -97,20 +96,60 @@ sup {
 }
 
 .graph {
+  $delta: #086788;
+
   left: 0;
   position: fixed;
   top: 0;
 
-  .area {
-    fill: #e83100;
-    stroke-width: 0.3;
+  [class*="area"],
+  [class*="line"] {
     fill-opacity: .1;
+    stroke-width: 0.3;
+  }
+
+  .twitter-area {
+    fill: #e83100;
+  }
+
+  .facebook-area {
+    fill: #086788;
+  }
+
+  .delta-line {
+    fill-opacity: .05;
+    fill: $delta;
+    stroke: $delta;
+    stroke-width: 1.3px;
+  }
+
+  g {
+    fill: none;
+    font-size: 0.8em;
+    stroke: #086788;
+    stroke-width: 0.5px;
+  }
+
+  g.y-axis-twitter,
+  g.y-axis-twitter .tick {
+    stroke: #ff663e;
+    fill-opacity: .1;
+    font-size: 0.7em;
+  }
+
+  g.y-axis-delta,
+  g.y-axis-delta .tick {
+    stroke: $delta;
+    stroke-width: 0.8px;
   }
 }
 
 .artist-searched {
+  background-color: rgba(255, 255, 255, 0.7);
+  color: #e83100;
   font-size: 0.8em;
   left: 110px;
+  padding: .5em;
   position: absolute;
 }
 
