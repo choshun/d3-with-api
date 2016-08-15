@@ -81,13 +81,19 @@ input {
 }
 
 .data {
-  opacity: 0.5;
+  opacity: 0.1;
 }
 
 .graph {
   left: 0;
   position: fixed;
   top: 0;
+
+  .area {
+    fill: #e83100;
+    stroke-width: 0.3;
+    fill-opacity: .6;
+  }
 }
 
 .accessible {
