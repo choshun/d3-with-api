@@ -20,6 +20,7 @@ class TargetService {
     this.twitterData = [];
     this.facebookData = [];
     this.deltaData = [];
+    this.highestDelta = 0;
   }
 
   graph(rawSvg, data) {
@@ -109,16 +110,17 @@ class TargetService {
     let twitterData = data.metrics.social[0]['twitterMetric'];
     let facebookData = data.metrics.social[1]['facebookMetric'];
     let deltaData = data.metrics.delta;
+
     this.twitterData = this.prepData(twitterData);
     this.facebookData = this.prepData(facebookData);
     this.deltaData = this.prepData(deltaData);
-
+    this.highestDelta = this.getFirstKey(data.metrics.highestDelta);
     this.setChartParameters(rawSvg);
 
     if (!this.initialized) {
       this.instantiateGraph(rawSvg);
     } else {
-      this.updateGraph();
+      this.updateGraph(rawSvg);
     }
   }
 
@@ -169,35 +171,63 @@ class TargetService {
       .attr('stroke-width', 2)
       .attr('class', 'delta-line');
 
+    // Circles
+    this.svg.append('circle')
+      .attr('class', 'highest-delta')
+      .attr("cx", (d) => { 
+        console.log(parseInt(this.highestDelta), this.padding); 
+        let percent = (this.padding + (this.highestDelta - this.twitterData[0].day) / (this.twitterData[this.twitterData.length - 1].day - this.twitterData[0].day) * rawSvg.clientWidth);
+        return percent;
+      })
+      .attr("cy", function (d) { return 300; })
+      .attr("r", function (d) { return 40; })
+      .style("fill", '#e83100')
+      .style("fill-opacity", '0.5');
+
+
     this.initialized = true;
   }
 
-  updateGraph() {
+  updateGraph(rawSvg) {
+    let timeout = 1200;
+
     this.svg.select(".twitter-area")
       .transition()
-      .duration(1000)
+      .duration(timeout)
       .ease("cubic")
       .attr("d", this.twitterArea(this.twitterData))
 
     this.svg.select(".facebook-area")
       .transition()
-      .duration(1000)
+      .duration(timeout)
       .ease("cubic")
       .attr("d", this.facebookArea(this.facebookData))
 
     this.svg.select(".delta-line")
       .transition()
-      .duration(1000)
+      .duration(timeout)
       .ease("cubic")
       .attr("d", this.lineFun(this.deltaData))
 
     this.svg.selectAll("g.y-axis-twitter").call(this.twitterYAxisGen);
     this.svg.selectAll("g.y-axis-facebook").call(this.facebookYAxisGen);
     this.svg.selectAll("g.y-axis-delta").call(this.deltaYAxisGen);
-    this.svg.selectAll("g.x.axis").call(this.xAxisGen);
+
+    this.svg.selectAll('circle')
+      .attr('class', 'highest-delta')
+      .attr("cx", (d) => { 
+        console.log(parseInt(this.highestDelta), this.padding); 
+        // let percent = (this.padding + (this.highestDelta - this.twitterData[0].day / this.twitterData[this.twitterData.length - 1].day - this.twitterData[0].day));
+        let percent = (this.padding + (this.highestDelta - this.twitterData[0].day) / (this.twitterData[this.twitterData.length - 1].day - this.twitterData[0].day) * rawSvg.clientWidth);
+        
+        return percent;
+      })
+      .transition()
+      .duration(timeout)
+      .ease("cubic")
   }
 
-  // Helpers
+  // TODO: Not DRY;
   getFirstKey(data) {
     for (var key in data) return key;
   }

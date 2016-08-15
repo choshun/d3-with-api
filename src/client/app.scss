@@ -60,21 +60,11 @@ legend {
 input {
   background-color: transparent;
   border: none;
-  // color: rgba(255, 189, 232, 0.4);
-  // color: rgba(0, 220, 255, 0.75);
   color: #e83100;
-  // color: #F15025;
-  font-family: 'Josefin Slab';
-  font-family: 'Arvo', serif;
   font-family: 'Abril Fatface', cursive;
   font-size: 1.5em;
-
   outline-color: #0aa8cc;
   padding: .5em;
-  // text-shadow: 4px 1px 0 rgb(208, 43, 43);
-  // text-shadow: 4px 1px 0 rgba(255, 45, 45, 0.75)
-// text-shadow: 4px 1px 0 rgba(0, 0, 0, 0.75);
-
 }
 
 sup {
@@ -156,6 +146,17 @@ sup {
   left: 110px;
   padding: .5em;
   position: absolute;
+}
+
+.good-week {
+  bottom: 1em;
+  color: #e83100;
+  // font-family: 'Abril Fatface', cursive;
+  font-size: 0.8em;
+  left: 100px;
+  // position: fixed;
+  text-align: center;
+
 }
 
 .accessible {
