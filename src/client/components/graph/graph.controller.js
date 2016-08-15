@@ -4,17 +4,11 @@ class TargetController {
 
     this.data = {};
     this.rawSvg = document.getElementById('graph');
-
-    this.init();
-  }
-
-  init() {
-    
   }
 
   $onChanges(changesObj) {
-    console.log('change!!!', this.data);
-    // this.graphService.graph(this.rawSvg, this.data);
+    // console.log('change!!!', this.data);
+    this.graphService.graph(this.rawSvg, this.data);
   }
 }
 
