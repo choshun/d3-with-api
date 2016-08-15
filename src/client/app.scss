@@ -7,36 +7,36 @@ html {
 }
 
 
-  @media (max-width: 800px) {
-    html {
-      font-size: 16px;
-
-      fieldset {
-        width: 8em;
-      }
-      input {
-        width: 150%;
-      } 
-    }
-  }
-
-  @media (min-width: 1000px) {
-    html {
-      font-size: 28px;
-    }
+@media (max-width: 800px) {
+  html {
+    font-size: 16px;
 
     fieldset {
       width: 8em;
     }
-
     input {
-      width: 200%;
-    }
-
-    svg.graph {
-      top: 2em;
-    }
+      width: 150%;
+    } 
   }
+}
+
+@media (min-width: 1000px) {
+  html {
+    font-size: 28px;
+  }
+
+  fieldset {
+    width: 8em;
+  }
+
+  input {
+    width: 200%;
+  }
+
+  svg.graph {
+    top: 2em;
+  }
+}
 
 h1 {
   // color: #07393C;
