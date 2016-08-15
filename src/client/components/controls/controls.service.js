@@ -130,6 +130,8 @@ class ControlsService {
 
   // TODO consolidate metric getters.
   getFacebookData(baseKey, data) {
+    if (baseKey.metrics['11'] === undefined) return;
+
     // Something fishy is going on here, when I move .endpoints to the return key it borks.
     let metricData = baseKey.metrics['11'].endpoints;
 
@@ -149,12 +151,17 @@ class ControlsService {
   }
 
   findDelta(socialData) {
+
+    if (!socialData) return;
+
     let data = this.aggregateSocialTotals(socialData),
         deltaMetric = {},
         deltaMetricFlat = [],
         deltaMetricOverTime = {},
         index = 0,
         oldObjKey;
+
+    this.highestDelta = 0;
 
     _.forOwn(data, (value, key) => {
 
@@ -165,6 +172,7 @@ class ControlsService {
         deltaMetricFlat.push(value);
 
         if (index > this.time) {
+
           deltaMetricOverTime[key] = this.getDeltaOverTime(deltaMetricFlat, index, this.time, key);
         }
 
@@ -178,9 +186,16 @@ class ControlsService {
   }
 
   aggregateSocialTotals(socialData) {
+    if (!socialData) return;
+
     let aggregateData = {},
         twitterData = socialData[0][this.getFirstKey(socialData[0])],
-        faceBookData = socialData[1][this.getFirstKey(socialData[1])];
+        faceBookData = {};
+
+    if (socialData[1] !== undefined) {
+      faceBookData = socialData[1][this.getFirstKey(socialData[1])];
+    }
+      
 
     _.forOwn(twitterData, (value, key) => {
       aggregateData[key] = (parseInt(twitterData[key]) + parseInt(faceBookData[key]));
