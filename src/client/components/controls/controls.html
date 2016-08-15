@@ -1,9 +1,8 @@
 <form>
-  <legend class="">Where should I play?</legend>
+  <legend class="">My best week ever!!! <sup>(in the last year)</sup></legend>
   <fieldset> 
     <input id="artist" type="text" value="{{ controlsCtrl.artistRequested }}" ng-change="controlsCtrl.getArtist()" ng-model="controlsCtrl.artistRequested" />
     <label for="artist" class="accessible">choose an artist</label>
-  </fieldset> 
-
-  Searched: {{ controlsCtrl.artistName }}  
+  </fieldset>  
 </form>
+<p><span class="accessible">Searched for:</span> <span class="artist-searched">{{ controlsCtrl.artistName }}</span></p>

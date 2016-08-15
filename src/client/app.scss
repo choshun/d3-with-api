@@ -26,11 +26,16 @@ html {
     }
 
     fieldset {
-        width: 8em;
-      }
-      input {
-        width: 200%;
-      } 
+      width: 8em;
+    }
+
+    input {
+      width: 200%;
+    }
+
+    svg.graph {
+      top: 2em;
+    }
   }
 
 h1 {
@@ -71,6 +76,11 @@ input {
 
 }
 
+sup {
+  font-size: 0.5em;  
+}
+
+
 .app {
   overflow: hidden;
 }
@@ -81,6 +91,7 @@ input {
 }
 
 .data {
+  font-size: .3em;
   opacity: 0.1;
 }
 
@@ -92,11 +103,20 @@ input {
   .area {
     fill: #e83100;
     stroke-width: 0.3;
-    fill-opacity: .6;
+    fill-opacity: .1;
   }
+}
+
+.artist-searched {
+  position: absolute;
+  left: 110px;
 }
 
 .accessible {
   left : -9999em;
   position: absolute;
+}
+
+.hidden {
+  visibility: hidden;
 }
