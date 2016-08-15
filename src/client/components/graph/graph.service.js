@@ -217,7 +217,6 @@ class TargetService {
       .attr('class', 'highest-delta')
       .attr("cx", (d) => { 
         console.log(parseInt(this.highestDelta), this.padding); 
-        // let percent = (this.padding + (this.highestDelta - this.twitterData[0].day / this.twitterData[this.twitterData.length - 1].day - this.twitterData[0].day));
         let percent = (this.padding + (this.highestDelta - this.twitterData[0].day) / (this.twitterData[this.twitterData.length - 1].day - this.twitterData[0].day) * rawSvg.clientWidth);
         
         return percent;
