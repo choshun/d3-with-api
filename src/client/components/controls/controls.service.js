@@ -32,6 +32,12 @@ class ControlsService {
     this.highestDelta = 0;
 
     /**
+     * Keep track of deltas if they're NaN.
+     * @type {Number}
+     */
+    this.oldDelta = 0;
+
+    /**
      * A day threshold.
      * @type {Number}
      */
@@ -198,6 +204,12 @@ class ControlsService {
       this.data.metrics.highestDelta = {
         [key - time]: this.highestDelta
       };
+    }
+
+    if (isNaN(delta)) {
+      delta = this.oldDelta;
+    } else {
+      this.oldDelta = delta;
     }
 
     return delta;
