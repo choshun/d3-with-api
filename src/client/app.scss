@@ -53,6 +53,7 @@ fieldset {
 }
 
 legend {
+  font-size: 1.1em;
   padding: 0.5em;
 }
 
@@ -108,8 +109,9 @@ sup {
 }
 
 .artist-searched {
-  position: absolute;
+  font-size: 0.8em;
   left: 110px;
+  position: absolute;
 }
 
 .accessible {
