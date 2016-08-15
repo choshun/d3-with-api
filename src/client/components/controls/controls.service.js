@@ -26,13 +26,13 @@ class ControlsService {
      * Sort of a placeholder, 
      *     {['day']: ['number for the week']}
      *
-     * is in this.data.metrics.
+     * is in this.data.metrics
      * @type {Number}
      */
     this.highestDelta = 0;
 
     /**
-     * Keep track of deltas if they're NaN.
+     * Keep track of deltas if they're NaN. This is kind of ghetto.
      * @type {Number}
      */
     this.oldDelta = 0;
