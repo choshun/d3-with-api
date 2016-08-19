@@ -220,7 +220,9 @@ class ControlsService {
     if (delta > this.highestDelta) {
       this.highestDelta = delta;
       this.data.metrics.highestDelta = {
-        [key - time]: this.highestDelta
+        [key - time]: this.highestDelta,
+        date: this.convertToDate(key - time),
+        total: this.highestDelta[key]
       };
     }
 
@@ -244,6 +246,17 @@ class ControlsService {
 
   getFirstKey(data) {
     for (var key in data) return key;
+  }
+
+  convertToDate(time) {
+    const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    let date = new Date(time * 86400000);
+    
+    let day = date.getDay() + 1,
+        month = MONTHS[date.getMonth()],
+        year = (date.getYear()).toString().substr(1);
+
+    return `: ${month} ${day}, 20${year}`;
   }
 }
 

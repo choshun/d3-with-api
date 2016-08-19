@@ -5,4 +5,12 @@
     <label for="artist" class="accessible">choose an artist</label>
   </fieldset>  
 </form>
-<p><span class="accessible">Searched for:</span> <span class="artist-searched">{{ controlsCtrl.artistName }}</span></p>
+<p>
+  <span class="accessible">Searched for:</span> 
+  <span class="artist-results">
+    {{ controlsCtrl.artistName }}
+    {{ controlsCtrl.data.metrics.highestDelta.date }}
+    {{ controlsCtrl.data.metrics.highestDelta.total }}
+  </span>
+
+</p>
