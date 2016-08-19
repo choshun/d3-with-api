@@ -186,16 +186,19 @@ class ControlsService {
   }
 
   aggregateSocialTotals(socialData) {
-    if (!socialData) return;
+    if (!socialData || !socialData[0] || !socialData[1]) return;
 
     let aggregateData = {},
-        twitterData = socialData[0][this.getFirstKey(socialData[0])],
-        faceBookData = {};
+        faceBookData = {},
+        twitterData = {};
 
-    if (socialData[1] !== undefined) {
+    if (socialData[0].hasOwnProperty('twitterMetric')) {
+      twitterData = socialData[0][this.getFirstKey(socialData[0])];
+    }
+
+    if (socialData[1].hasOwnProperty('facebookMetric')) {
       faceBookData = socialData[1][this.getFirstKey(socialData[1])];
     }
-      
 
     _.forOwn(twitterData, (value, key) => {
       aggregateData[key] = (parseInt(twitterData[key]) + parseInt(faceBookData[key]));

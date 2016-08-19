@@ -1,5 +1,5 @@
 import * as D3 from 'd3';
-import { forOwn } from 'lodash';
+import { forOwn, forEach } from 'lodash';
 
 class TargetService {
   constructor() {
@@ -20,16 +20,57 @@ class TargetService {
     this.twitterData = [];
     this.facebookData = [];
     this.deltaData = [];
+    this.emptyData = {};
     this.highestDelta = 0;
   }
 
   graph(rawSvg, data) {
     this.svg = D3.select(rawSvg);
-    this.drawCharts(rawSvg, data);
+    this.drawCharts(rawSvg, this.cleanSocialData(data));
   }
 
-  getName() {
-    return this.name;
+  prepData(data) {
+    let preppedData = [];
+
+    _.forOwn(data, (value, key) => {
+
+      preppedData.push({
+        day: key,
+        total: value
+      });
+
+      this.emptyData[key] = 0;
+    });
+
+    return preppedData;
+  }
+
+  cleanSocialData(data) {
+    if (data.metrics) {
+      let socialKey = ''; 
+      
+      let cleanedData = [];
+
+      if (data.metrics.social !== undefined) {
+        _.forEach(data.metrics.social, (item, index) => {
+          socialKey = (index === 0) ? 'twitterMetric': 'facebookMetric';
+
+          (item === undefined) ? cleanedData.push({[socialKey]: this.emptyData}) : cleanedData.push(item);
+        });
+      } else {
+        cleanedData.push({
+          'twitterMetric': this.emptyData
+        },
+        {
+          'facebookMetric': this.emptyData
+        });
+      }
+
+      data.metrics.social = cleanedData;
+    }
+
+
+    return data;
   }
 
   setChartParameters(rawSvg) {
@@ -52,7 +93,7 @@ class TargetService {
     this.xAxisGen = D3.svg.axis()
       .scale(this.xScale)
       .orient("bottom")
-      .ticks(12)
+      .ticks(12);
 
     this.twitterYAxisGen = D3.svg.axis()
       .scale(this.twitterYScale)
@@ -91,25 +132,12 @@ class TargetService {
       .interpolate("basis");
   }
 
-  prepData(data) {
-    let preppedData = [];
-
-    _.forOwn(data, (value, key) => {
-      preppedData.push({
-        day: key,
-        total: value
-      });
-    });
-
-    return preppedData;
-  }
-
   drawCharts(rawSvg, data) {
     if (data.metrics === undefined) return;
 
     let twitterData = data.metrics.social[0]['twitterMetric'];
     let facebookData = data.metrics.social[1]['facebookMetric'];
-    let deltaData = data.metrics.delta;
+    let deltaData = (data.metrics.delta !== undefined) ? data.metrics.delta: 0;
 
     this.twitterData = this.prepData(twitterData);
     this.facebookData = this.prepData(facebookData);
@@ -125,6 +153,7 @@ class TargetService {
   }
 
   instantiateGraph(rawSvg) {
+    const Y_AXIS_OFFSET = -5;
 
     // Axes.
     this.svg.append('svg:g')
@@ -136,39 +165,33 @@ class TargetService {
     this.svg.append('svg:g')
       .classed("svg-container", true)
       .attr('class', 'y-axis-twitter')
-      .attr('transform', `translate(${rawSvg.clientWidth - this.padding + 5}, -5)`)
+      .attr('transform', `translate(${rawSvg.clientWidth - this.padding + 5}, ${Y_AXIS_OFFSET})`)
       .call(this.twitterYAxisGen);
 
     this.svg.append('svg:g')
       .classed("svg-container", true)
       .attr('class', 'y-axis-facebook')
-      .attr('transform', `translate(${rawSvg.clientWidth - this.padding + 5}, -5)`)
+      .attr('transform', `translate(${rawSvg.clientWidth - this.padding + 5}, ${Y_AXIS_OFFSET})`)
       .call(this.facebookYAxisGen);
 
     this.svg.append('svg:g')
       .classed("svg-container", true)
       .attr('class', 'y-axis-delta')
-      .attr('transform', `translate(${this.padding + 5}, -5)`)
+      .attr('transform', `translate(${this.padding}, ${Y_AXIS_OFFSET})`)
       .call(this.deltaYAxisGen);
 
     // Areas.
     this.svg.append('svg:path')
       .attr('d', this.twitterArea(this.twitterData))
-      .attr('stroke', '#07A0C3')
-      .attr('stroke-width', 2)
       .attr('class', 'twitter-area');
 
     this.svg.append('svg:path')
       .attr('d', this.facebookArea(this.facebookData))
-      .attr('stroke', '#07A0C3')
-      .attr('stroke-width', 2)
       .attr('class', 'facebook-area');
 
     // Lines.
     this.svg.append('svg:path')
       .attr('d', this.lineFun(this.deltaData))
-      .attr('stroke', '#07A0C3')
-      .attr('stroke-width', 2)
       .attr('class', 'delta-line');
 
     // Circles
@@ -177,7 +200,6 @@ class TargetService {
       .attr("cx", (d) => { 
         console.log(parseInt(this.highestDelta), this.padding); 
         let percent = this.getDeltaPercent(rawSvg);
-
         return percent;
       })
       .attr("cy", function (d) { return 300; })
@@ -220,8 +242,6 @@ class TargetService {
         // console.log(parseInt(this.highestDelta), this.padding); 
         let percent = this.getDeltaPercent(rawSvg);
         console.log('percent', percent);
-
-
         return percent;
       })
       .transition()
