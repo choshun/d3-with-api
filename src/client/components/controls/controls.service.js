@@ -222,7 +222,7 @@ class ControlsService {
       this.data.metrics.highestDelta = {
         [key - time]: this.highestDelta,
         date: this.convertToDate(key - time),
-        total: this.highestDelta[key]
+        total: `+${this.highestDelta}`
       };
     }
 
@@ -256,7 +256,7 @@ class ControlsService {
         month = MONTHS[date.getMonth()],
         year = (date.getYear()).toString().substr(1);
 
-    return `: ${month} ${day}, 20${year}`;
+    return `week of ${month} ${day}, 20${year}`;
   }
 }
 

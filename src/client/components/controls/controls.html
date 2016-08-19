@@ -9,8 +9,10 @@
   <span class="accessible">Searched for:</span> 
   <span class="artist-results">
     {{ controlsCtrl.artistName }}
-    {{ controlsCtrl.data.metrics.highestDelta.date }}
-    {{ controlsCtrl.data.metrics.highestDelta.total }}
+    <sup>
+      {{ controlsCtrl.data.metrics.highestDelta.total }}
+      {{ controlsCtrl.data.metrics.highestDelta.date }}
+    </sup>
   </span>
 
 </p>
