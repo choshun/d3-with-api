@@ -176,7 +176,8 @@ class TargetService {
       .attr('class', 'highest-delta')
       .attr("cx", (d) => { 
         console.log(parseInt(this.highestDelta), this.padding); 
-        let percent = (this.padding + (this.highestDelta - this.twitterData[0].day) / (this.twitterData[this.twitterData.length - 1].day - this.twitterData[0].day) * rawSvg.clientWidth);
+        let percent = this.getDeltaPercent(rawSvg);
+
         return percent;
       })
       .attr("cy", function (d) { return 300; })
@@ -216,9 +217,11 @@ class TargetService {
     this.svg.selectAll('circle')
       .attr('class', 'highest-delta')
       .attr("cx", (d) => { 
-        console.log(parseInt(this.highestDelta), this.padding); 
-        let percent = (this.padding + (this.highestDelta - this.twitterData[0].day) / (this.twitterData[this.twitterData.length - 1].day - this.twitterData[0].day) * rawSvg.clientWidth);
-        
+        // console.log(parseInt(this.highestDelta), this.padding); 
+        let percent = this.getDeltaPercent(rawSvg);
+        console.log('percent', percent);
+
+
         return percent;
       })
       .transition()
@@ -227,6 +230,12 @@ class TargetService {
   }
 
   // TODO: Not DRY;
+  getDeltaPercent(rawSvg) {
+
+    console.log('update', this.highestDelta, (this.highestDelta - this.twitterData[0].day));
+    return (((this.highestDelta - this.twitterData[0].day) / (this.twitterData[this.deltaData.length - 1].day - this.twitterData[0].day)) * (rawSvg.clientWidth + this.padding));
+  }
+
   getFirstKey(data) {
     for (var key in data) return key;
   }
