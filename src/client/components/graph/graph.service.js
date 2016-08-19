@@ -93,7 +93,7 @@ class TargetService {
     this.xAxisGen = D3.svg.axis()
       .scale(this.xScale)
       .orient("bottom")
-      .ticks(12);
+      .ticks(0);
 
     this.twitterYAxisGen = D3.svg.axis()
       .scale(this.twitterYScale)
@@ -237,8 +237,8 @@ class TargetService {
 
     this.svg.selectAll('circle')
       .transition()
-      .delay(timeout / 2)
-      .duration(timeout / 2)
+      .delay(timeout * 3.5 / 4)
+      .duration(timeout / 4)
       .ease("cubic")
       .attr("cx", (d) => { 
         return this.getDeltaPercent(rawSvg);
