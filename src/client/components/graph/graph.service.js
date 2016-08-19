@@ -198,11 +198,10 @@ class TargetService {
     this.svg.append('circle')
       .attr('class', 'highest-delta')
       .attr("cx", (d) => { 
-        console.log(parseInt(this.highestDelta), this.padding); 
         let percent = this.getDeltaPercent(rawSvg);
         return percent;
       })
-      .attr("cy", function (d) { return 300; })
+      .attr("cy", function (d) { return rawSvg.clientHeight / 2; })
       .attr("r", function (d) { return 40; })
       .style("fill", '#e83100')
       .style("fill-opacity", '0.5');
@@ -218,42 +217,36 @@ class TargetService {
       .transition()
       .duration(timeout)
       .ease("cubic")
-      .attr("d", this.twitterArea(this.twitterData))
+      .attr("d", this.twitterArea(this.twitterData));
 
     this.svg.select(".facebook-area")
       .transition()
       .duration(timeout)
       .ease("cubic")
-      .attr("d", this.facebookArea(this.facebookData))
+      .attr("d", this.facebookArea(this.facebookData));
 
     this.svg.select(".delta-line")
       .transition()
       .duration(timeout)
       .ease("cubic")
-      .attr("d", this.lineFun(this.deltaData))
+      .attr("d", this.lineFun(this.deltaData));
 
     this.svg.selectAll("g.y-axis-twitter").call(this.twitterYAxisGen);
     this.svg.selectAll("g.y-axis-facebook").call(this.facebookYAxisGen);
     this.svg.selectAll("g.y-axis-delta").call(this.deltaYAxisGen);
 
     this.svg.selectAll('circle')
-      .attr('class', 'highest-delta')
-      .attr("cx", (d) => { 
-        // console.log(parseInt(this.highestDelta), this.padding); 
-        let percent = this.getDeltaPercent(rawSvg);
-        console.log('percent', percent);
-        return percent;
-      })
       .transition()
-      .duration(timeout)
+      .delay(timeout / 2)
+      .duration(timeout / 2)
       .ease("cubic")
+      .attr("cx", (d) => { 
+        return this.getDeltaPercent(rawSvg);
+      });
   }
 
-  // TODO: Not DRY;
   getDeltaPercent(rawSvg) {
-
-    console.log('update', this.highestDelta, (this.highestDelta - this.twitterData[0].day));
-    return (((this.highestDelta - this.twitterData[0].day) / (this.twitterData[this.deltaData.length - 1].day - this.twitterData[0].day)) * (rawSvg.clientWidth + this.padding));
+    return (((this.highestDelta - this.facebookData[0].day) / (this.facebookData[this.facebookData.length - 1].day - this.facebookData[0].day)) * (rawSvg.clientWidth - (2 * this.padding))) + parseInt(this.padding);
   }
 
   getFirstKey(data) {
