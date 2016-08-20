@@ -1,6 +1,6 @@
 class AppController {
   constructor(graphService) {
-    this.data = 'onions'
+    this.data = undefined;
   }
 
   modifyData(data) {
