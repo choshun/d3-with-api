@@ -5,7 +5,7 @@ class TargetService {
   constructor() {
     this.name = 'graph service';
 
-    this.padding = 100;
+    this.padding = 60;
     this.pathClass = 'path';
     this.svg = undefined;
     this.xScale = undefined;
@@ -97,21 +97,33 @@ class TargetService {
 
     this.twitterYAxisGen = D3.svg.axis()
       .scale(this.twitterYScale)
-      .orient("right")
-      .ticks(5)
-      .tickFormat(d3.format("0s"));
+      .orient("left")
+      .ticks(3)
+      .tickFormat(function(d, index) { 
+          if (index === 0) {
+            return `${d3.format('0s')(d)}`;  
+          } else {
+            return d3.format('0s')(d);
+          }
+      })
 
     this.facebookYAxisGen = D3.svg.axis()
       .scale(this.facebookYScale)
-      .orient("left")
-      .ticks(5)
-      .tickFormat(d3.format("0s"));
+      .orient("right")
+      .ticks(2)
+      .tickFormat(function(d, index) { 
+          if (index === 0) {
+            return `${d3.format('0s')(d)}`;
+          } else {
+            return d3.format('0s')(d);
+          }
+      });
 
     this.deltaYAxisGen = D3.svg.axis()
       .scale(this.deltaYScale)
       .orient("left")
-      .ticks(5)
-      .tickFormat(d3.format("0s"));
+      .tickFormat(d3.format("0s"))
+      .ticks(2);
 
     this.twitterArea = D3.svg.area()
       .x((d) => this.xScale(d.day))
@@ -156,11 +168,12 @@ class TargetService {
     const Y_AXIS_OFFSET = -5;
 
     // Axes.
-    this.svg.append('svg:g')
+    this.svg
+      .append('svg:g')
       .classed("svg-container", true)
       .attr('class', 'x-axis')
       .attr('transform', `translate(0, ${rawSvg.clientHeight - this.padding})`)
-      .call(this.xAxisGen);
+      .call(this.xAxisGen)
 
     this.svg.append('svg:g')
       .classed("svg-container", true)
@@ -183,7 +196,7 @@ class TargetService {
     // Areas.
     this.svg.append('svg:path')
       .attr('d', this.twitterArea(this.twitterData))
-      .attr('class', 'twitter-area');
+      .attr('class', 'twitter-area')
 
     this.svg.append('svg:path')
       .attr('d', this.facebookArea(this.facebookData))
@@ -201,8 +214,8 @@ class TargetService {
         let percent = this.getDeltaPercent(rawSvg);
         return percent;
       })
-      .attr("cy", function (d) { return rawSvg.clientHeight / 2; })
-      .attr("r", function (d) { return 40; })
+      .attr("cy", (d) => rawSvg.clientHeight / 2)
+      .attr("r", (d) => 30)
       .style("fill", '#e83100')
       .style("fill-opacity", '0.5');
 

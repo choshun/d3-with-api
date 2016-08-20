@@ -2,14 +2,13 @@ html {
 	background-color: #fff;
   color: #086788;
   font-family: 'Josefin Slab', serif;
-  // font-family: 'Arvo', serif;
-  font-size: 20px;
+  font-size: 18px;
 }
 
 
 @media (max-width: 800px) {
   html {
-    font-size: 16px;
+    font-size: 14px;
 
     fieldset {
       width: 8em;
@@ -22,7 +21,7 @@ html {
 
 @media (min-width: 1000px) {
   html {
-    font-size: 28px;
+    font-size: 20px;
   }
 
   fieldset {
@@ -31,10 +30,6 @@ html {
 
   input {
     width: 200%;
-  }
-
-  svg.graph {
-    top: 2em;
   }
 }
 
@@ -94,7 +89,7 @@ sup {
 
   left: 0;
   position: fixed;
-  top: 0;
+  top: 4em;
 
   [class*="area"],
   [class*="line"] {
@@ -122,11 +117,19 @@ sup {
     fill-opacity: .05;
   }
 
+
+  .tick {
+    fill: #fff;
+    fill-opacity: 0.8;
+  }
+
   g {
     fill: none;
     font-size: 0.8em;
     stroke: #086788;
     stroke-width: 0.5px;
+    fill: #fff;
+    fill-opacity: 0.8;
   }
 
   g.y-axis-twitter,
@@ -139,14 +142,14 @@ sup {
   g.y-axis-delta,
   g.y-axis-delta .tick {
     stroke: $delta;
-    stroke-width: 0.8px;
+    stroke-width: 0.9px;
   }
 }
 
 .artist-results {
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(255, 255, 255, 0.8);
   color: #e83100;
-  font-size: 0.8em;
+  font-size: 0.9em;
   left: 110px;
   padding: .5em;
   position: absolute;
